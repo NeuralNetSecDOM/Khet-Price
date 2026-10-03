@@ -30,6 +30,31 @@ cd Khet-Price
 npm install
 ```
 
+### Environment Setup
+
+The app talks to the data.gov.in API, which requires an API key. Keys are read from environment variables — no key is committed to this repository.
+
+```bash
+cp .env.example .env    # Windows: copy .env.example .env
+```
+
+Then open `.env` and set your own key:
+
+```ini
+VITE_DATA_GOV_API_KEY=your_api_key_here
+VITE_DATA_GOV_RESOURCE_ID=9ef84268-d588-465a-a308-a864a43d0070
+```
+
+| Variable | Required | Description |
+| --- | --- | --- |
+| `VITE_DATA_GOV_API_KEY` | yes | Your key from [data.gov.in](https://data.gov.in/resources/api) |
+| `VITE_DATA_GOV_RESOURCE_ID` | yes | Resource ID for the daily commodity price dataset |
+
+> **Notes**
+> - `.env` is gitignored and stays local. Only `.env.example` is committed.
+> - Vite only exposes variables prefixed with `VITE_` to client code, and it inlines them into the JS bundle at build time. Anything placed there is readable by anyone who loads the app, so never put a private/secret credential in a `VITE_*` variable.
+> - Restart the dev server after editing `.env` — Vite reads it at startup.
+
 ### Development
 
 ```bash
@@ -69,7 +94,7 @@ The app uses [Government of India's Open Data API](https://api.data.gov.in/) for
   https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070
   ```
 - **Parameters:**
-  - `api-key`: API key for data.gov.in (public demo key included for development)
+  - `api-key`: API key for data.gov.in, supplied via the `VITE_DATA_GOV_API_KEY` environment variable (see [Environment Setup](#environment-setup))
   - `format`: Response format, set to `json`
   - Filters:
     - `state.keyword`: State name (URL-encoded)
@@ -81,7 +106,7 @@ The app uses [Government of India's Open Data API](https://api.data.gov.in/) for
   ```
 - **Response:** Returns an array of records with fields for state, district, market, commodity, prices, and arrival date.
 
-> **Note:** For production, you should request your own API key from [data.gov.in](https://data.gov.in/resources/api).
+> **Note:** Request your own API key from [data.gov.in](https://data.gov.in/resources/api). Keys are not committed to this repo — supply yours through `.env`.
 
 ---
 
