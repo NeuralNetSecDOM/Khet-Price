@@ -6,6 +6,12 @@ import { FiltersBar } from './components/filtersBar'
 import { AppContext } from './context/AppContext'
 import Ashok_Emblem from './assets/Ashok_Emblem.png'
 
+// data.gov.in configuration - read from .env at build time.
+// See .env.example for setup; .env itself is gitignored.
+const apiKey = import.meta.env.VITE_DATA_GOV_API_KEY;
+const resourceId = import.meta.env.VITE_DATA_GOV_RESOURCE_ID;
+const DATA_GOV_ENDPOINT = `https://api.data.gov.in/resource/${resourceId}`;
+
 interface record {
   state: string,
   district: string,
@@ -161,6 +167,10 @@ function App() {
 
 async function getInfo(detail: { states: string, district: string }) {
   try {
+    if (!apiKey || !resourceId) {
+      console.error('Missing data.gov.in config. Copy .env.example to .env and fill in your API key.');
+      return;
+    }
     console.log('detail : ', detail)
     let seperated_state = ''
     let url = ''
@@ -174,11 +184,11 @@ async function getInfo(detail: { states: string, district: string }) {
     console.log('state : ', detail.states)
     console.log('district : ', detail.district)
     if (seperated_state != '' && detail.district != '') {
-      url = 'https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b&format=json&filters%5Bstate.keyword%5D=' + seperated_state + '&filters%5Bdistrict%5D=' + detail.district;
+      url = `${DATA_GOV_ENDPOINT}?api-key=${apiKey}&format=json&filters%5Bstate.keyword%5D=` + seperated_state + `&filters%5Bdistrict%5D=` + detail.district;
 
     }
     else {
-      url = 'https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b&format=json&filters%5Bstate.keyword%5D=' + seperated_state;
+      url = `${DATA_GOV_ENDPOINT}?api-key=${apiKey}&format=json&filters%5Bstate.keyword%5D=` + seperated_state;
 
     }
 
